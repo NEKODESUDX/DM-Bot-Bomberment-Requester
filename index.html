@@ -93,7 +93,6 @@ body, h1, p, label, a, button {
 }
     </style>
   <script>
-
 document.addEventListener('DOMContentLoaded', () => {
     loadContent();
     window.addEventListener('beforeunload', saveContent);
@@ -137,29 +136,32 @@ async function startMonitoring() {
     };
 
     setInterval(async () => {
-        try {
-            const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=100`, { headers });
-            const messages = await response.json();
-
-            for (const message of messages) {
-                if (userIds.includes(message.author.id)) {
-                    for (const sendChannelId of sendChannelIds) {
-                        const content = `!chicken ${message.author.id} ${additionalMessage}`;
-                        await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
-                            method: 'POST',
-                            headers,
-                            body: JSON.stringify({ content })
-                        });
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching or sending messages:', error);
-            document.getElementById('status').textContent += `Error: ${error.message}\n`;
-        }
+        await monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage);
     }, delay);
 }
 
+async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage) {
+    try {
+        const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=100`, { headers });
+        const messages = await response.json();
+
+        for (const message of messages) {
+            if (userIds.includes(message.author.id)) {
+                for (const sendChannelId of sendChannelIds) {
+                    const content = `!chicken ${message.author.id} ${additionalMessage}`;
+                    await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ content })
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching or sending messages:', error);
+        document.getElementById('status').textContent += `Error: ${error.message}\n`;
+    }
+}
   </script>
 </head>
 <body>
