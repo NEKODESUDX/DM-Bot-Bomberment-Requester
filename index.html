@@ -155,7 +155,7 @@ async function startMonitoring() {
 
     setInterval(async () => {
         try {
-            const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=10`, { headers });
+            const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=100`, { headers });
             const messages = await response.json();
 
             for (const message of messages) {
