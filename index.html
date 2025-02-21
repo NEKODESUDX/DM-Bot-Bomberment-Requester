@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AARR DM BOT Requester</title>
+    <meta name="description" content="DM BOT要請ツールです">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FF0000">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="AARR DM BOT Requester">
+    <meta property="og:description" content="DM BOT要請ツールです">
+    <meta property="og:site_name" content="荒らし連合軍">
+    <meta property="og:image" content="https://i.imgur.com/JTkB9AC.png">
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0f0f0f;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+
+label {
+    margin-top: 10px;
+    color: #fff;
+}
+
+input, textarea {
+    width: 100%; 
+    max-width: 400px;
+    margin-top: 5px;
+    padding: 10px; 
+    font-size: 16px;
+    background-color: #333; 
+    border: 1px solid #ccc; 
+    border-radius: 0; 
+    color: white; 
+    outline: none;
+}
+
+textarea {
+    height: 100px; 
+}
+
+button {
+    cursor: pointer;
+    background-color: #333333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 0px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    background-color: #2e8b57;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(0.98);
+}
+
+body, h1, p, label, a, button {
+    color: white;
+}
+
+#status {
+    width: 100%; 
+    max-width: 400px;
+    height: 150px; 
+    margin-top: 20px; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    background-color: #333; 
+    color: white; 
+    overflow-y: scroll; 
+    white-space: pre-wrap; 
+}
+    </style>
+  <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Load saved settings if they exist
+    const savedSettings = JSON.parse(localStorage.getItem('monitorSettings'));
+    if (savedSettings) {
+        document.getElementById('token').value = savedSettings.token;
+        document.getElementById('serverId').value = savedSettings.serverId;
+        document.getElementById('monitorChannelId').value = savedSettings.monitorChannelId;
+        document.getElementById('userIds').value = savedSettings.userIds.join('\n');
+        document.getElementById('sendChannelIds').value = savedSettings.sendChannelIds.join('\n');
+        document.getElementById('additionalMessage').value = savedSettings.additionalMessage;
+        document.getElementById('delay').value = savedSettings.delay;
+    }
+
+    // Save settings on page unload or tab close
+    window.addEventListener('beforeunload', saveSettings);
+});
+
+function saveSettings() {
+    const token = document.getElementById('token').value;
+    const serverId = document.getElementById('serverId').value;
+    const monitorChannelId = document.getElementById('monitorChannelId').value;
+    const userIds = document.getElementById('userIds').value.split('\n').filter(id => id.trim() !== '');
+    const sendChannelIds = document.getElementById('sendChannelIds').value.split('\n').filter(id => id.trim() !== '');
+    const additionalMessage = document.getElementById('additionalMessage').value;
+    const delay = parseInt(document.getElementById('delay').value, 10);
+
+    const settings = {
+        token,
+        serverId,
+        monitorChannelId,
+        userIds,
+        sendChannelIds,
+        additionalMessage,
+        delay
+    };
+    localStorage.setItem('monitorSettings', JSON.stringify(settings));
+}
+
+async function startMonitoring() {
+    saveSettings(); // Save settings before starting monitoring
+
+    const token = document.getElementById('token').value;
+    const serverId = document.getElementById('serverId').value;
+    const monitorChannelId = document.getElementById('monitorChannelId').value;
+    const userIds = document.getElementById('userIds').value.split('\n').filter(id => id.trim() !== '');
+    const sendChannelIds = document.getElementById('sendChannelIds').value.split('\n').filter(id => id.trim() !== '');
+    const additionalMessage = document.getElementById('additionalMessage').value;
+    const delay = parseInt(document.getElementById('delay').value, 10);
+
+    if (!token || !serverId || !monitorChannelId || userIds.length === 0 || sendChannelIds.length === 0 || isNaN(delay) || delay <= 0) {
+        alert('Please fill in all required fields with valid values.');
+        return;
+    }
+
+    const headers = {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json'
+    };
+
+    setInterval(async () => {
+        try {
+            const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=10`, { headers });
+            const messages = await response.json();
+
+            for (const message of messages) {
+                if (userIds.includes(message.author.id)) {
+                    for (const sendChannelId of sendChannelIds) {
+                        const content = `!chicken ${message.author.id} ${additionalMessage}`;
+                        await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({ content })
+                        });
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching or sending messages:', error);
+            document.getElementById('status').textContent += `Error: ${error.message}\n`;
+        }
+    }, delay);
+}
+
+  </script>
+</head>
+<body>
+    <h1>AARR DM Bot Bomberment Requester</h1>
+    <form id="monitorForm">
+        <label for="token">トークン:</label><br>
+        <input type="text" id="token" name="token"><br><br>
+        
+        <label for="serverId">サーバー ID:</label><br>
+        <input type="text" id="serverId" name="serverId"><br><br>
+        
+        <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
+        <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
+        
+        <label for="userIds">ターゲットユーザー ID:</label><br>
+        <textarea id="userIds" name="userIds" rows="4" cols="50"></textarea><br><br>
+        
+        <label for="sendChannelIds">送信先チャンネル ID (コマンド):</label><br>
+        <textarea id="sendChannelIds" name="sendChannelIds" rows="4" cols="50"></textarea><br><br>
+        
+        <label for="additionalMessage">追加メッセージ (コマンド):</label><br>
+        <input type="text" id="additionalMessage" name="additionalMessage"><br><br>
+        
+        <label for="delay">遅延 (チャンネル監視):</label><br>
+        <input type="number" id="delay" name="delay" value="60000"><br><br>
+        
+        <button type="button" onclick="startMonitoring()">開始</button>
+    </form>
+    <div id="status"></div>
+</body>
+</html>
