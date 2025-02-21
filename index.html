@@ -95,45 +95,28 @@ body, h1, p, label, a, button {
   <script>
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Load saved settings if they exist
-    const savedSettings = JSON.parse(localStorage.getItem('monitorSettings'));
-    if (savedSettings) {
-        document.getElementById('token').value = savedSettings.token;
-        document.getElementById('serverId').value = savedSettings.serverId;
-        document.getElementById('monitorChannelId').value = savedSettings.monitorChannelId;
-        document.getElementById('userIds').value = savedSettings.userIds.join('\n');
-        document.getElementById('sendChannelIds').value = savedSettings.sendChannelIds.join('\n');
-        document.getElementById('additionalMessage').value = savedSettings.additionalMessage;
-        document.getElementById('delay').value = savedSettings.delay;
-    }
-
-    // Save settings on page unload or tab close
-    window.addEventListener('beforeunload', saveSettings);
+    loadContent();
+    window.addEventListener('beforeunload', saveContent);
 });
 
-function saveSettings() {
-    const token = document.getElementById('token').value;
-    const serverId = document.getElementById('serverId').value;
-    const monitorChannelId = document.getElementById('monitorChannelId').value;
-    const userIds = document.getElementById('userIds').value.split('\n').filter(id => id.trim() !== '');
-    const sendChannelIds = document.getElementById('sendChannelIds').value.split('\n').filter(id => id.trim() !== '');
-    const additionalMessage = document.getElementById('additionalMessage').value;
-    const delay = parseInt(document.getElementById('delay').value, 10);
+function saveContent() {
+    const inputs = document.querySelectorAll("input, textarea");
+    inputs.forEach(input => {
+        localStorage.setItem(input.id, input.value);
+    });
+}
 
-    const settings = {
-        token,
-        serverId,
-        monitorChannelId,
-        userIds,
-        sendChannelIds,
-        additionalMessage,
-        delay
-    };
-    localStorage.setItem('monitorSettings', JSON.stringify(settings));
+function loadContent() {
+    const inputs = document.querySelectorAll("input, textarea");
+    inputs.forEach(input => {
+        if (localStorage.getItem(input.id)) {
+            input.value = localStorage.getItem(input.id);
+        }
+    });
 }
 
 async function startMonitoring() {
-    saveSettings(); // Save settings before starting monitoring
+    saveContent(); // Save settings before starting monitoring
 
     const token = document.getElementById('token').value;
     const serverId = document.getElementById('serverId').value;
