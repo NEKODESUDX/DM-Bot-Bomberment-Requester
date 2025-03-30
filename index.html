@@ -93,6 +93,7 @@ body, h1, p, label, a, button {
 }
     </style>
   <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     loadContent();
     window.addEventListener('beforeunload', saveContent);
@@ -220,6 +221,7 @@ async function monitorAndSendValidationMessages(headers, monitorChannelId, compa
         document.getElementById('status').textContent += `Error: ${error.message}\n`;
     }
 }
+</script>
   </script>
 </head>
 <body>
