@@ -181,7 +181,7 @@ async function startValidationMonitoring() {
         'Content-Type': 'application/json'
     };
 
-    validationResults = await monitorAndGetValidationResults(headers, monitorChannelId, comparisonIds, validationIds);
+    validationResults = await monitorAndGetValidationResults(headers, comparisonIds, validationIds);
 
     displayValidationResults(validationResults);
 }
@@ -238,11 +238,8 @@ async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendCh
     }
 }
 
-async function monitorAndGetValidationResults(headers, monitorChannelId, comparisonIds, validationIds) {
+async function monitorAndGetValidationResults(headers, comparisonIds, validationIds) {
     try {
-        const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=100`, { headers });
-        const messages = await response.json();
-
         let results = [];
 
         for (const comparisonId of comparisonIds) {
@@ -331,8 +328,6 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
         
         <label for="validationIds">爆撃鯖に参加しているメンバー全体のID:</label><br>
         <textarea id="validationIds" name="validationIds" rows="4" cols="50"></textarea><br><br>
-
-
 
         <button type="button" onclick="startValidationMonitoring()">検証開始</button>
     </form>
