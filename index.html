@@ -311,8 +311,6 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <label for="additionalMessage">追加メッセージ (コマンド):</label><br>
     <input type="text" id="additionalMessage" name="additionalMessage"><br><br>
 
-    <label for="delay">遅延 (チャンネル監視):</label><br>
-    <input type="number" id="delay" name="delay" value="60000"><br><br>
 
     <!-- 新しい項目: コマンド送信関連 -->
     <label for="interval">コマンド送信間隔 (ミリ秒):</label><br>
@@ -327,7 +325,7 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
 
     <!-- join監視系入力欄 -->
     <h2>join監視系入力欄</h2>
-    <button type="button" onclick="startMonitoring()">通常開始</button>
+
     <!-- New Fields for Comparison and Validation IDs -->
     <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
     <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
@@ -335,6 +333,10 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <label for="userIds">ターゲットユーザー ID:</label><br>
     <textarea id="userIds" name="userIds" rows="4" cols="50"></textarea><br><br>
 
+    <label for="delay">遅延 (チャンネル監視):</label><br>
+    <input type="number" id="delay" name="delay" value="60000"><br><br>
+    
+    <button type="button" onclick="startMonitoring()">join監視開始</button>
     <!-- 検証系入力欄 -->
     <h2>検証系入力欄</h2>
 
