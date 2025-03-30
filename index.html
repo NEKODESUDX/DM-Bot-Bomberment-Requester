@@ -287,9 +287,8 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
   </script>
 </head>
 <body>
-    <h1>AARR DM Bot Requester</h1>
-    <form id="monitorForm">
-
+<h1>AARR DM Bot Requester</h1>
+<form id="monitorForm">
     <p>このツールは、<a href="https://discord.gg/kC2Nf6tgmd" target="_blank">DMbotサーバー</a>で使用する為のツールです</p>
     <p>機能</p>
     <ul>
@@ -298,76 +297,62 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
         <li>コマンドは繰り返し送信 (botが負荷によって再起動した場合でも送信し続けることができます)</li>
     </ul>
 
-        <label for="token">トークン:</label><br>
-        <input type="text" id="token" name="token"><br><br>
+    <!-- 主要設定 -->
+    <h2>主要設定</h2>
+    <label for="token">トークン:</label><br>
+    <input type="text" id="token" name="token"><br><br>
 
-        <label for="serverId">サーバー ID:</label><br>
-        <input type="text" id="serverId" name="serverId"><br><br>
+    <label for="serverId">サーバー ID:</label><br>
+    <input type="text" id="serverId" name="serverId"><br><br>
 
+    <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
+    <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
 
+    <label for="userIds">ターゲットユーザー ID:</label><br>
+    <textarea id="userIds" name="userIds" rows="4" cols="50"></textarea><br><br>
 
+    <label for="sendChannelIds">送信先チャンネル ID (コマンド):</label><br>
+    <textarea id="sendChannelIds" name="sendChannelIds" rows="4" cols="50"></textarea><br><br>
 
+    <label for="additionalMessage">追加メッセージ (コマンド):</label><br>
+    <input type="text" id="additionalMessage" name="additionalMessage"><br><br>
 
+    <label for="delay">遅延 (チャンネル監視):</label><br>
+    <input type="number" id="delay" name="delay" value="60000"><br><br>
 
+    <!-- 新しい項目: コマンド送信関連 -->
+    <label for="interval">コマンド送信間隔 (ミリ秒):</label><br>
+    <input type="number" id="interval" name="interval" value="60000"><br><br>
 
-        <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
-        <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
+    <label for="repetitions">コマンド送信回数:</label><br>
+    <input type="number" id="repetitions" name="repetitions" value="1"><br><br>
 
+    <label for="sendDelay">送信遅延 (ミリ秒):</label><br>
+    <input type="number" id="sendDelay" name="sendDelay" value="0"><br><br>
 
-        <label for="userIds">ターゲットユーザー ID:</label><br>
-        <textarea id="userIds" name="userIds" rows="4" cols="50"></textarea><br><br>
+    <label for="userSendDelay">ユーザーごとの送信遅延 (ミリ秒):</label><br>
+    <input type="number" id="userSendDelay" name="userSendDelay" value="0"><br><br>
 
-        <label for="sendChannelIds">送信先チャンネル ID (コマンド):</label><br>
-        <textarea id="sendChannelIds" name="sendChannelIds" rows="4" cols="50"></textarea><br><br>
-        
-        <label for="additionalMessage">追加メッセージ (コマンド):</label><br>
-        <input type="text" id="additionalMessage" name="additionalMessage"><br><br>
+    <!-- join監視系入力欄 -->
+    <h2>join監視系入力欄</h2>
 
-        <label for="delay">遅延 (チャンネル監視):</label><br>
-        <input type="number" id="delay" name="delay" value="60000"><br><br>
+    <!-- New Fields for Comparison and Validation IDs -->
+    <label for="comparisonIds">比較用ID:</label><br>
+    <textarea id="comparisonIds" name="comparisonIds" rows="4" cols="50"></textarea><br><br>
 
-        <!-- New Fields for Comparison and Validation IDs -->
-        <label for="comparisonIds">比較用ID:</label><br>
+    <!-- 検証系入力欄 -->
+    <h2>検証系入力欄</h2>
 
+    <label for="validationIds">検証用ID:</label><br>
+    <textarea id="validationIds" name="validationIds" rows="4" cols="50"></textarea><br><br>
 
+    <button type="button" onclick="startMonitoring()">通常開始</button>
+    <button type="button" onclick="startValidationMonitoring()">検証開始</button>
+</form>
 
+<!-- New Section to Display Validation Results and Start Sending -->
+<div id="validationResults"></div>
+<button type="button" onclick="sendValidationMessages()">検証結果の送信を開始</button>
 
-
-
-        <textarea id="comparisonIds" name="comparisonIds" rows="4" cols="50"></textarea><br><br>
-
-        <label for="validationIds">検証用ID:</label><br>
-        <textarea id="validationIds" name="validationIds" rows="4" cols="50"></textarea><br><br>
-
-        <!-- New Fields for Interval and Repetitions -->
-        <label for="interval">コマンド送信間隔 (ミリ秒):</label><br>
-        <input type="number" id="interval" name="interval" value="60000"><br><br>
-        
-        <label for="repetitions">コマンド送信回数:</label><br>
-        <input type="number" id="repetitions" name="repetitions" value="1"><br><br>
-
-        <!-- New Field for Send Delay -->
-        <label for="sendDelay">送信遅延 (ミリ秒):</label><br>
-        <input type="number" id="sendDelay" name="sendDelay" value="0"><br><br>
-
-        <!-- New Field for User Send Delay -->
-        <label for="userSendDelay">ユーザーごとの送信遅延 (ミリ秒):</label><br>
-        <input type="number" id="userSendDelay" name="userSendDelay" value="0"><br><br>
-        
-        <button type="button" onclick="startMonitoring()">通常開始</button>
-        <button type="button" onclick="startValidationMonitoring()">検証開始</button>
-    </form>
-
-    <!-- New Section to Display Validation Results and Start Sending -->
-    <div id="validationResults"></div>
-    <button type="button" onclick="sendValidationMessages()">検証結果の送信を開始</button>
-
-
-
-
-
-
-
-
-    <div id="status"></div>
+<div id="status"></div>
 </body>
