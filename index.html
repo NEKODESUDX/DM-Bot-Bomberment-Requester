@@ -182,6 +182,7 @@ async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendCh
                         headers,
                         body: JSON.stringify({ content })
                     });
+                    document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${message.author.id}\n`;
                 }
             }
         }
@@ -208,6 +209,7 @@ async function monitorAndSendValidationMessages(headers, monitorChannelId, compa
                                     headers,
                                     body: JSON.stringify({ content })
                                 });
+                                document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${comparisonId} (Repetition ${i + 1})\n`;
                             }, interval * i);
                         }
                     }
