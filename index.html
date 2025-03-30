@@ -305,12 +305,6 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <label for="serverId">サーバー ID:</label><br>
     <input type="text" id="serverId" name="serverId"><br><br>
 
-    <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
-    <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
-
-    <label for="userIds">ターゲットユーザー ID:</label><br>
-    <textarea id="userIds" name="userIds" rows="4" cols="50"></textarea><br><br>
-
     <label for="sendChannelIds">送信先チャンネル ID (コマンド):</label><br>
     <textarea id="sendChannelIds" name="sendChannelIds" rows="4" cols="50"></textarea><br><br>
 
@@ -330,28 +324,34 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <label for="sendDelay">送信遅延 (ミリ秒):</label><br>
     <input type="number" id="sendDelay" name="sendDelay" value="0"><br><br>
 
-    <label for="userSendDelay">ユーザーごとの送信遅延 (ミリ秒):</label><br>
-    <input type="number" id="userSendDelay" name="userSendDelay" value="0"><br><br>
 
     <!-- join監視系入力欄 -->
     <h2>join監視系入力欄</h2>
-
+    <button type="button" onclick="startMonitoring()">通常開始</button>
     <!-- New Fields for Comparison and Validation IDs -->
-    <label for="comparisonIds">比較用ID:</label><br>
-    <textarea id="comparisonIds" name="comparisonIds" rows="4" cols="50"></textarea><br><br>
+    <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
+    <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
+
+    <label for="userIds">ターゲットユーザー ID:</label><br>
+    <textarea id="userIds" name="userIds" rows="4" cols="50"></textarea><br><br>
 
     <!-- 検証系入力欄 -->
     <h2>検証系入力欄</h2>
 
     <label for="validationIds">検証用ID:</label><br>
     <textarea id="validationIds" name="validationIds" rows="4" cols="50"></textarea><br><br>
+    <label for="comparisonIds">比較用ID:</label><br>
+    <textarea id="comparisonIds" name="comparisonIds" rows="4" cols="50"></textarea><br><br>
 
-    <button type="button" onclick="startMonitoring()">通常開始</button>
+
     <button type="button" onclick="startValidationMonitoring()">検証開始</button>
 </form>
 
 <!-- New Section to Display Validation Results and Start Sending -->
 <div id="validationResults"></div>
+    <label for="userSendDelay">ユーザーごとの送信遅延 (ミリ秒):</label><br>
+    <input type="number" id="userSendDelay" name="userSendDelay" value="0"><br><br>
+
 <button type="button" onclick="sendValidationMessages()">検証結果の送信を開始</button>
 
 <div id="status"></div>
