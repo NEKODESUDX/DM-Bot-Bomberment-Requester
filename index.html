@@ -152,9 +152,8 @@ async function startValidationMonitoring() {
     const additionalMessage = document.getElementById('additionalMessage').value;
     const interval = parseInt(document.getElementById('interval').value, 10);
     const repetitions = parseInt(document.getElementById('repetitions').value, 10);
-    const delay = parseInt(document.getElementById('delay').value, 10);
 
-    if (!token || !serverId || !monitorChannelId || comparisonIds.length === 0 || validationIds.length === 0 || sendChannelIds.length === 0 || isNaN(interval) || interval <= 0 || isNaN(repetitions) || repetitions <= 0 || isNaN(delay) || delay <= 0) {
+    if (!token || !serverId || !monitorChannelId || comparisonIds.length === 0 || validationIds.length === 0 || sendChannelIds.length === 0 || isNaN(interval) || interval <= 0 || isNaN(repetitions) || repetitions <= 0) {
         alert('Please fill in all required fields with valid values.');
         return;
     }
@@ -166,7 +165,7 @@ async function startValidationMonitoring() {
 
     setInterval(async () => {
         await monitorAndSendValidationMessages(headers, monitorChannelId, comparisonIds, validationIds, sendChannelIds, additionalMessage, interval, repetitions);
-    }, delay);
+    }, interval);
 }
 
 async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage) {
