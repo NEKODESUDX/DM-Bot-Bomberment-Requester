@@ -91,6 +91,19 @@ body, h1, p, label, a, button {
     overflow-y: scroll; 
     white-space: pre-wrap; 
 }
+
+#validationResults {
+    width: 100%; 
+    max-width: 400px;
+    height: 150px; 
+    margin-top: 20px; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    background-color: #333; 
+    color: white; 
+    overflow-y: scroll; 
+    white-space: pre-wrap; 
+}
     </style>
   <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -113,6 +126,8 @@ function loadContent() {
         }
     });
 }
+
+let validationResults = [];
 
 async function startMonitoring() {
     saveContent(); // Save settings before starting monitoring
@@ -166,9 +181,36 @@ async function startValidationMonitoring() {
         'Content-Type': 'application/json'
     };
 
-    setInterval(async () => {
-        await monitorAndSendValidationMessages(headers, monitorChannelId, comparisonIds, validationIds, sendChannelIds, additionalMessage, interval, repetitions, sendDelay, userSendDelay);
-    }, interval);
+    validationResults = await monitorAndGetValidationResults(headers, monitorChannelId, comparisonIds, validationIds);
+
+    displayValidationResults(validationResults);
+}
+
+function displayValidationResults(results) {
+    const validationResultsContainer = document.getElementById('validationResults');
+    validationResultsContainer.textContent = results.join('\n');
+}
+
+async function sendValidationMessages() {
+    const token = document.getElementById('token').value;
+    const sendChannelIds = document.getElementById('sendChannelIds').value.split('\n').filter(id => id.trim() !== '');
+    const additionalMessage = document.getElementById('additionalMessage').value;
+    const interval = parseInt(document.getElementById('interval').value, 10);
+    const repetitions = parseInt(document.getElementById('repetitions').value, 10);
+    const sendDelay = parseInt(document.getElementById('sendDelay').value, 10);
+    const userSendDelay = parseInt(document.getElementById('userSendDelay').value, 10);
+
+    if (!token || sendChannelIds.length === 0 || isNaN(interval) || interval <= 0 || isNaN(repetitions) || repetitions <= 0 || isNaN(sendDelay) || sendDelay <= 0 || isNaN(userSendDelay) || userSendDelay < 0) {
+        alert('Please fill in all required fields with valid values.');
+        return;
+    }
+
+    const headers = {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json'
+    };
+
+    await monitorAndSendValidationMessages(headers, validationResults, sendChannelIds, additionalMessage, interval, repetitions, sendDelay, userSendDelay);
 }
 
 async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage, userSendDelay) {
@@ -196,33 +238,49 @@ async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendCh
     }
 }
 
-async function monitorAndSendValidationMessages(headers, monitorChannelId, comparisonIds, validationIds, sendChannelIds, additionalMessage, interval, repetitions, sendDelay, userSendDelay) {
+async function monitorAndGetValidationResults(headers, monitorChannelId, comparisonIds, validationIds) {
     try {
         const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=100`, { headers });
         const messages = await response.json();
 
+        let results = [];
+
         for (const message of messages) {
             for (const comparisonId of comparisonIds) {
                 if (validationIds.includes(comparisonId)) {
-                    for (const sendChannelId of sendChannelIds) {
-                        for (let i = 0; i < repetitions; i++) {
-                            setTimeout(async () => {
-                                const content = `!chicken ${comparisonId} ${additionalMessage}`;
-                                await new Promise(resolve => setTimeout(resolve, userSendDelay));
-                                await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
-                                    method: 'POST',
-                                    headers,
-                                    body: JSON.stringify({ content })
-                                });
-                                document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${comparisonId} (Repetition ${i + 1})\n`;
-                            }, interval * i + sendDelay);
-                        }
-                    }
+                    results.push(comparisonId);
+                }
+            }
+        }
+
+        return results;
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        document.getElementById('status').textContent += `Error: ${error.message}\n`;
+        return [];
+    }
+}
+
+async function monitorAndSendValidationMessages(headers, validationResults, sendChannelIds, additionalMessage, interval, repetitions, sendDelay, userSendDelay) {
+    try {
+        for (const comparisonId of validationResults) {
+            for (const sendChannelId of sendChannelIds) {
+                for (let i = 0; i < repetitions; i++) {
+                    setTimeout(async () => {
+                        const content = `!chicken ${comparisonId} ${additionalMessage}`;
+                        await new Promise(resolve => setTimeout(resolve, userSendDelay));
+                        await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({ content })
+                        });
+                        document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${comparisonId} (Repetition ${i + 1})\n`;
+                    }, interval * i + sendDelay);
                 }
             }
         }
     } catch (error) {
-        console.error('Error fetching or sending messages:', error);
+        console.error('Error sending messages:', error);
         document.getElementById('status').textContent += `Error: ${error.message}\n`;
     }
 }
@@ -285,6 +343,11 @@ async function monitorAndSendValidationMessages(headers, monitorChannelId, compa
         <button type="button" onclick="startMonitoring()">通常開始</button>
         <button type="button" onclick="startValidationMonitoring()">検証開始</button>
     </form>
+    
+    <!-- New Section to Display Validation Results and Start Sending -->
+    <div id="validationResults"></div>
+    <button type="button" onclick="sendValidationMessages()">検証結果の送信を開始</button>
+    
     <div id="status"></div>
 </body>
 </html>
