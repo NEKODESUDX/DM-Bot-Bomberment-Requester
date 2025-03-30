@@ -263,19 +263,19 @@ async function monitorAndGetValidationResults(headers, monitorChannelId, compari
 
 async function monitorAndSendValidationMessages(headers, validationResults, sendChannelIds, additionalMessage, interval, repetitions, sendDelay, userSendDelay) {
     try {
-        for (const comparisonId of validationResults) {
+        for (let j = 0; j < validationResults.length; j++) {
+            const comparisonId = validationResults[j];
             for (const sendChannelId of sendChannelIds) {
                 for (let i = 0; i < repetitions; i++) {
                     setTimeout(async () => {
                         const content = `!chicken ${comparisonId} ${additionalMessage}`;
-                        await new Promise(resolve => setTimeout(resolve, userSendDelay));
                         await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
                             method: 'POST',
                             headers,
                             body: JSON.stringify({ content })
                         });
                         document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${comparisonId} (Repetition ${i + 1})\n`;
-                    }, interval * i + sendDelay);
+                    }, interval * i + sendDelay + j * userSendDelay);
                 }
             }
         }
