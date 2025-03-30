@@ -92,7 +92,7 @@ body, h1, p, label, a, button {
     white-space: pre-wrap; 
 }
     </style>
-  <script>
+ <script>
 document.addEventListener('DOMContentLoaded', () => {
     loadContent();
     window.addEventListener('beforeunload', saveContent);
@@ -124,6 +124,8 @@ async function startMonitoring() {
     const sendChannelIds = document.getElementById('sendChannelIds').value.split('\n').filter(id => id.trim() !== '');
     const additionalMessage = document.getElementById('additionalMessage').value;
     const delay = parseInt(document.getElementById('delay').value, 10);
+    const comparisonIds = document.getElementById('comparisonIds').value.split('\n').filter(id => id.trim() !== '');
+    const validationIds = document.getElementById('validationIds').value.split('\n').filter(id => id.trim() !== '');
 
     if (!token || !serverId || !monitorChannelId || userIds.length === 0 || sendChannelIds.length === 0 || isNaN(delay) || delay <= 0) {
         alert('Please fill in all required fields with valid values.');
@@ -136,11 +138,11 @@ async function startMonitoring() {
     };
 
     setInterval(async () => {
-        await monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage);
+        await monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage, comparisonIds, validationIds);
     }, delay);
 }
 
-async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage) {
+async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendChannelIds, additionalMessage, comparisonIds, validationIds) {
     try {
         const response = await fetch(`https://discord.com/api/v9/channels/${monitorChannelId}/messages?limit=100`, { headers });
         const messages = await response.json();
@@ -156,13 +158,26 @@ async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendCh
                     });
                 }
             }
+
+            for (const comparisonId of comparisonIds) {
+                if (validationIds.includes(comparisonId)) {
+                    for (const sendChannelId of sendChannelIds) {
+                        const content = `!chicken ${comparisonId} ${additionalMessage}`;
+                        await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({ content })
+                        });
+                    }
+                }
+            }
         }
     } catch (error) {
         console.error('Error fetching or sending messages:', error);
         document.getElementById('status').textContent += `Error: ${error.message}\n`;
     }
 }
-  </script>
+</script>
 </head>
 <body>
     <h1>AARR DM Bot Requester</h1>
