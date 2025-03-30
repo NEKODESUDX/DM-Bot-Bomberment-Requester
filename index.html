@@ -245,11 +245,9 @@ async function monitorAndGetValidationResults(headers, monitorChannelId, compari
 
         let results = [];
 
-        for (const message of messages) {
-            for (const comparisonId of comparisonIds) {
-                if (validationIds.includes(comparisonId)) {
-                    results.push(comparisonId);
-                }
+        for (const comparisonId of comparisonIds) {
+            if (validationIds.includes(comparisonId)) {
+                results.push(comparisonId);
             }
         }
 
