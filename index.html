@@ -206,15 +206,15 @@ async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendCh
         for (const message of messages) {
             if (userIds.includes(message.author.id)) {
                 for (const sendChannelId of sendChannelIds) {
-                    const content = `!chicken ${message.author.id} ${additionalMessage}`;
-                    for (const userId of userIds) {
+                    for (const userId of userIds) {  
+                        const content = `!chicken ${message.author.id} ${additionalMessage}`;
                         await new Promise(resolve => setTimeout(resolve, userSendDelay));
                         await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
                             method: 'POST',
                             headers,
-                            body: JSON.stringify({ content: `!chicken ${userId} ${additionalMessage}` })
+                            body: JSON.stringify({ content })
                         });
-                        document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${userId}\n`;
+                        document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${message.author.id}\n`;
                     }
                 }
             }
