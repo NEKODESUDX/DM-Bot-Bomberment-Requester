@@ -207,13 +207,15 @@ async function monitorAndSendMessages(headers, monitorChannelId, userIds, sendCh
             if (userIds.includes(message.author.id)) {
                 for (const sendChannelId of sendChannelIds) {
                     const content = `!chicken ${message.author.id} ${additionalMessage}`;
-                    await new Promise(resolve => setTimeout(resolve, userSendDelay));
-                    await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
-                        method: 'POST',
-                        headers,
-                        body: JSON.stringify({ content })
-                    });
-                    document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${message.author.id}\n`;
+                    for (const userId of userIds) {
+                        await new Promise(resolve => setTimeout(resolve, userSendDelay));
+                        await fetch(`https://discord.com/api/v9/channels/${sendChannelId}/messages`, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({ content: `!chicken ${userId} ${additionalMessage}` })
+                        });
+                        document.getElementById('status').textContent += `Sent message to ${sendChannelId} for user ${userId}\n`;
+                    }
                 }
             }
         }
