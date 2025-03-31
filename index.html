@@ -266,15 +266,14 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <label for="additionalMessage">追加メッセージ (コマンド):</label><br>
     <input type="text" id="additionalMessage" name="additionalMessage"><br><br>
 
-    <label for="interval">コマンド送信間隔 (ミリ秒):</label><br>
+    <label for="interval">複数チャンネル毎のコマンド送信間隔 (ミリ秒):</label><br>
     <input type="number" id="interval" name="interval" value="60000"><br><br>
+    
+    <label for="sendDelay">コマンドの送信間隔 (ミリ秒):</label><br>
+    <input type="number" id="sendDelay" name="sendDelay" value="0"><br><br>
 
     <label for="repetitions">コマンド送信回数:</label><br>
     <input type="number" id="repetitions" name="repetitions" value="1"><br><br>
-
-    <label for="sendDelay">送信遅延 (ミリ秒):</label><br>
-    <input type="number" id="sendDelay" name="sendDelay" value="0"><br><br>
-
 
 
     <h2>join監視</h2>
