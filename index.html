@@ -130,7 +130,7 @@ function loadContent() {
 let validationResults = [];
 
 async function startMonitoring() {
-    saveContent(); // Save settings before starting monitoring
+    saveContent(); 
 
     const token = document.getElementById('token').value;
     const serverId = document.getElementById('serverId').value;
@@ -157,7 +157,7 @@ async function startMonitoring() {
 }
 
 async function startValidationMonitoring() {
-    saveContent(); // Save settings before starting monitoring
+    saveContent(); 
 
     const comparisonIds = document.getElementById('comparisonIds').value.split('\n').filter(id => id.trim() !== '');
     const validationIds = document.getElementById('validationIds').value.split('\n').filter(id => id.trim() !== '');
@@ -252,14 +252,7 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
 <h1>AARR DM Bot Requester</h1>
 <form id="monitorForm">
     <p>このツールは、<a href="https://discord.gg/kC2Nf6tgmd" target="_blank">DMbotサーバー</a>で使用する為のツールです</p>
-    <p>機能</p>
-    <ul>
-        <li>joinログを定期的に監視</li>
-        <li>指定したユーザーが参加した時に自動でDMbotコマンドを送信</li>
-        <li>コマンドは繰り返し送信 (botが負荷によって再起動した場合でも送信し続けることができます)</li>
-    </ul>
-
-    <!-- 主要設定 -->
+ 
     <h2>主要設定</h2>
     <label for="token">トークン:</label><br>
     <input type="text" id="token" name="token"><br><br>
@@ -273,8 +266,6 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <label for="additionalMessage">追加メッセージ (コマンド):</label><br>
     <input type="text" id="additionalMessage" name="additionalMessage"><br><br>
 
-
-    <!-- 新しい項目: コマンド送信関連 -->
     <label for="interval">コマンド送信間隔 (ミリ秒):</label><br>
     <input type="number" id="interval" name="interval" value="60000"><br><br>
 
@@ -285,10 +276,13 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <input type="number" id="sendDelay" name="sendDelay" value="0"><br><br>
 
 
-    <!-- join監視系入力欄 -->
-    <h2>join監視系入力欄</h2>
 
-    <!-- New Fields for Comparison and Validation IDs -->
+    <h2>join監視</h2>
+  <ul>
+        <li>joinログを定期的に監視</li>
+        <li>指定したユーザーが参加した時に自動でDMbotコマンドを送信</li>
+        <li>コマンドは繰り返し送信 (botが負荷によって再起動した場合でも送信し続けることができます)</li>
+    </ul>
     <label for="monitorChannelId">監視チャンネル ID (Join):</label><br>
     <input type="text" id="monitorChannelId" name="monitorChannelId"><br><br>
 
@@ -299,24 +293,25 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
     <input type="number" id="delay" name="delay" value="60000"><br><br>
     
     <button type="button" onclick="startMonitoring()">join監視開始</button>
-    <!-- 検証系入力欄 -->
-    <h2>検証系入力欄</h2>
 
-    <label for="validationIds">検証用ID:</label><br>
+    <h2>検証</h2>
+      <ul>
+        <li>爆撃鯖にターゲットが参加しているかを検証します</li>
+        <li>userIDは拡張機能を使用して取得してください</li>
+    </ul>
+    <label for="validationIds">ターゲットuserID:</label><br>
     <textarea id="validationIds" name="validationIds" rows="4" cols="50"></textarea><br><br>
-    <label for="comparisonIds">比較用ID:</label><br>
+    <label for="comparisonIds">爆撃鯖全員のuserID:</label><br>
     <textarea id="comparisonIds" name="comparisonIds" rows="4" cols="50"></textarea><br><br>
-
 
     <button type="button" onclick="startValidationMonitoring()">検証開始</button>
 </form>
 
-<!-- New Section to Display Validation Results and Start Sending -->
 <div id="validationResults"></div>
     <label for="userSendDelay">ユーザーごとの送信遅延 (ミリ秒):</label><br>
     <input type="number" id="userSendDelay" name="userSendDelay" value="0"><br><br>
 
-<button type="button" onclick="sendValidationMessages()">検証結果の送信を開始</button>
+<button type="button" onclick="sendValidationMessages()">検証結果のuseridを使って送信を開始</button>
 
 <div id="status"></div>
 </body>
