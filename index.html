@@ -300,16 +300,16 @@ async function monitorAndSendValidationMessages(headers, validationResults, send
         <li>ターゲットuseridは<a href="https://aarr-homepage.github.io/page/aarrtool.html">拡張機能</a>を使用して取得してください</li>
         <li>爆撃鯖全員のuseridは<a href="https://discord.gg/rJhBxgphcZ">爆撃鯖</a>で定期的に公開してます</li>
     </ul>
-    <label for="validationIds">ターゲットuserID:</label><br>
+    <label for="validationIds">ターゲットuserID (改行):</label><br>
     <textarea id="validationIds" name="validationIds" rows="4" cols="50"></textarea><br><br>
-    <label for="comparisonIds">爆撃鯖全員のuserID:</label><br>
+    <label for="comparisonIds">爆撃鯖全員のuserID (改行):</label><br>
     <textarea id="comparisonIds" name="comparisonIds" rows="4" cols="50"></textarea><br><br>
 
     <button type="button" onclick="startValidationMonitoring()">検証開始</button>
 </form>
-
+検証結果:
 <div id="validationResults"></div>
-    <label for="userSendDelay">ユーザーごとの送信遅延 (ミリ秒):</label><br>
+    <label for="userSendDelay">ユーザーごとのコマンド送信遅延 (ミリ秒):</label><br>
     <input type="number" id="userSendDelay" name="userSendDelay" value="0"><br><br>
 
 <button type="button" onclick="sendValidationMessages()">検証結果のuseridを使って送信を開始</button>
